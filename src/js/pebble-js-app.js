@@ -2,7 +2,7 @@ var messageSendQueue = [];
 var sent = 0;
 var received = 0;
 function sendNextMessage() {
-  if (messageSendQueue.length == 0) {
+  if (messageSendQueue.length === 0) {
     return;
   }
   var transactionId = Pebble.sendAppMessage( messageSendQueue.shift(), messageSendSuccess,messageSendFail );
@@ -101,7 +101,7 @@ function getStops(lat,lon) {
     else {
       console.log("Unknown Error Getting Stops: " + req.status);
     }
-  }
+  };
   req.send(null);
 }
 
@@ -152,7 +152,7 @@ function getDepartures(stop) {
     else {
       console.log("Unknown Error Getting Departures: " + req.status);
     }
-  }
+  };
   req.send(null);
 }
 Pebble.addEventListener("ready",
