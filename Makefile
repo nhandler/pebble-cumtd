@@ -7,3 +7,6 @@ build:
 
 install:
 	pebble install
+
+clean:
+	pebble clean
