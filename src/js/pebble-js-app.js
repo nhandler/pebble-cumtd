@@ -10,6 +10,7 @@ function sendNextMessage() {
 } 
 
 function addMessage(dict) {
+  console.log("Queing Message: " + JSON.stringify(dict));
   messageSendQueue.push(dict);
   if (sent == received) {
     sendNextMessage();
@@ -36,9 +37,8 @@ function messageSendFail(e) {
 function gotLocation(position) {
   console.log("Latitude: " + position.coords.latitude);
   console.log("Longitude: " + position.coords.longitude);
-  getStops(position.coords.latitude, position.coords.longitude);
-  //var coords = position.coords.latitude + "," + position.coords.longitude;
-  //var transactionId = Pebble.sendAppMessage( { "firstKey": 42, "name": coords }, messageSendSuccess,messageSendFail );
+  //getStops(position.coords.latitude, position.coords.longitude);
+  getStops(40.110520, -88.230628);
 }
 
 function getLocation() {
@@ -61,6 +61,7 @@ function getStops(lat,lon) {
   var count = 5;
   var url = baseUrl + "key=" + key + "&lat=" + lat + "&lon=" + lon + "&count=" + count;
   var req = new XMLHttpRequest();
+  req.overrideMimeType("application/json");
   console.log("URL: " + url);
   req.open('GET', url, true);
   req.onload = function(e) {
@@ -68,31 +69,25 @@ function getStops(lat,lon) {
     if (req.readyState == 4 && req.status == 200) {
       if(req.status == 200) {
         var response = JSON.parse(req.responseText);
-        var stop1= response.stops[0].stop_name;
-        var stop2= response.stops[1].stop_name;
-        var stop3= response.stops[2].stop_name;
-        var stop4= response.stops[3].stop_name;
-        var stop5= response.stops[4].stop_name;
-        var code1= response.stops[0].stop_id;
-        var code2= response.stops[1].stop_id;
-        var code3= response.stops[2].stop_id;
-        var code4= response.stops[3].stop_id;
-        var code5= response.stops[4].stop_id;
-        console.log("Stop1: " + stop1);
-        console.log("Stop2: " + stop2);
-        console.log("Stop3: " + stop3);
-        console.log("Stop4: " + stop4);
-        console.log("Stop5: " + stop5);
-        console.log("Code1: " + code1);
-        console.log("Code2: " + code2);
-        console.log("Code3: " + code3);
-        console.log("Code4: " + code4);
-        console.log("Code5: " + code5);
-        addMessage({"stop":stop1,"code":code1});
-        addMessage({"stop":stop2,"code":code2});
-        addMessage({"stop":stop3,"code":code3});
-        addMessage({"stop":stop4,"code":code4});
-        addMessage({"stop":stop5,"code":code5});
+        for (var i=0; i < 5 ; i++) {
+            var stop = response.stops[i].stop_name;
+            var code = response.stops[i].stop_id;
+            if (stop) {
+                stop = stop.toString();
+                console.log("Stop: " + stop);
+            }
+            if (code) {
+                code = code.toString();
+                console.log("Code: " + code);
+            }
+            if (stop && code) {
+                var message = JSON.parse(JSON.stringify({"stop":stop,"code":code}));
+                addMessage(message);
+            }
+            else {
+                console.log("NOT Queueing Message");
+            }
+        }
       }
       else {
         console.log("Error Getting Stops");
@@ -112,6 +107,7 @@ function getDepartures(stop) {
   var count = 5;
   var url = baseUrl + "key=" + key + "&stop_id=" + stop + "&count=" + count;
   var req = new XMLHttpRequest();
+  req.overrideMimeType("application/json");
   console.log("URL: " + url);
   req.open('GET', url, true);
   req.onload = function(e) {
@@ -119,31 +115,30 @@ function getDepartures(stop) {
     if (req.readyState == 4 && req.status == 200) {
       if(req.status == 200) {
         var response = JSON.parse(req.responseText);
-        var hs1 = response.departures[0].headsign;
-        var time1 = response.departures[0].expected_mins.toString() + " Minutes";
-        var hs2 = response.departures[1].headsign;
-        var time2 = response.departures[1].expected_mins.toString() + " Minutes";
-        var hs3 = response.departures[2].headsign;
-        var time3 = response.departures[2].expected_mins.toString() + " Minutes";
-        var hs4 = response.departures[3].headsign;
-        var time4 = response.departures[3].expected_mins.toString() + " Minutes";
-        var hs5 = response.departures[4].headsign;
-        var time5 = response.departures[4].expected_mins.toString() + " Minutes";
-        console.log("HS1: " + hs1);
-        console.log("HS2: " + hs2);
-        console.log("HS3: " + hs3);
-        console.log("HS4: " + hs4);
-        console.log("HS5: " + hs5);
-        console.log("TIME1: " + time1);
-        console.log("TIME2: " + time2);
-        console.log("TIME3: " + time3);
-        console.log("TIME4: " + time4);
-        console.log("TIME5: " + time5);
-        addMessage({"code":stop,"headsign":hs1,"esttime":time1});
-        addMessage({"code":stop,"headsign":hs2,"esttime":time2});
-        addMessage({"code":stop,"headsign":hs3,"esttime":time3});
-        addMessage({"code":stop,"headsign":hs4,"esttime":time4});
-        addMessage({"code":stop,"headsign":hs5,"esttime":time5});
+        for (var i=0; i < 5 ; i++) {
+            var headsign = response.departures[i].headsign;
+            var time = response.departures[i].expected_mins;
+            if (headsign) {
+                headsign = headsign.toString();
+                console.log("Headsign: " + headsign);
+            }
+            if (time) {
+                if (time === 0) {
+                    time = "Due";
+                }
+                else {
+                    time = time.toString() + " Minutes";
+                }
+                console.log("Time: " + time);
+            }
+            if (headsign && time) {
+                var message = JSON.parse(JSON.stringify({"code":stop,"headsign":headsign,"esttime":time}));
+                addMessage(message);
+            }
+            else {
+                console.log("NOT Queueing Message");
+            }
+        }
       }
       else {
         console.log("Error Getting Departures");
@@ -157,7 +152,6 @@ function getDepartures(stop) {
 }
 Pebble.addEventListener("ready",
     function(e) {
-        console.log("Hello world! - Sent from your javascript application.");
         console.log("Pebble Account Token: " + Pebble.getAccountToken());
         Pebble.addEventListener("appmessage", messageReceived);
         getLocation();
