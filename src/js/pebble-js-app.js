@@ -37,8 +37,7 @@ function messageSendFail(e) {
 function gotLocation(position) {
   console.log("Latitude: " + position.coords.latitude);
   console.log("Longitude: " + position.coords.longitude);
-  //getStops(position.coords.latitude, position.coords.longitude);
-  getStops(40.110520, -88.230628);
+  getStops(position.coords.latitude, position.coords.longitude);
 }
 
 function getLocation() {
