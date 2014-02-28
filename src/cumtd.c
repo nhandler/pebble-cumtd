@@ -138,6 +138,16 @@ void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *da
   window_stack_push(dep_window, animated);
 }
 
+void dep_menu_select_long_click_callback(MenuLayer *dep_menu_layer, MenuIndex *cell_index, void *data) {
+  window_stack_pop(false);
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  Tuplet value = TupletCString(code, dep_code+12);
+  dict_write_tuplet(iter, &value);
+  app_message_outbox_send();
+  window_stack_push(dep_window, false);
+}
+
 void dep_menu_select_callback(MenuLayer *dep_menu_layer, MenuIndex *cell_index, void *data) {
 /*  if (cell_index->section == 0) {
     DictionaryIterator *iter;
@@ -180,6 +190,7 @@ static void dep_window_load(Window *window) {
     .draw_header = dep_menu_draw_header_callback,
     .draw_row = dep_menu_draw_row_callback,
     .select_click = dep_menu_select_callback,
+    .select_long_click = dep_menu_select_long_click_callback,
   });
 
   menu_layer_set_click_config_onto_window(dep_menu_layer, window);
