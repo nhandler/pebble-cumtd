@@ -115,28 +115,35 @@ function getDepartures(stop) {
       if(req.status == 200) {
         var response = JSON.parse(req.responseText);
         for (var i=0; i < 5 ; i++) {
+          if (response.departures[i]) {
             var headsign = response.departures[i].headsign;
             var time = response.departures[i].expected_mins;
             if (headsign) {
-                headsign = headsign.toString();
-                console.log("Headsign: " + headsign);
+              headsign = headsign.toString();
+              console.log("Headsign: " + headsign);
             }
             if (time) {
-                if (time === 0) {
-                    time = "Due";
-                }
-                else {
-                    time = time.toString() + " Minutes";
-                }
-                console.log("Time: " + time);
+              if (time === 0) {
+                time = "Due";
+              }
+              else {
+                time = time.toString() + " Minutes";
+              }
+              console.log("Time: " + time);
             }
             if (headsign && time) {
-                var message = JSON.parse(JSON.stringify({"code":stop,"headsign":headsign,"esttime":time}));
-                addMessage(message);
+              var message = JSON.parse(JSON.stringify({"code":stop,"headsign":headsign,"esttime":time}));
+              addMessage(message);
             }
             else {
-                console.log("NOT Queueing Message");
+              console.log("NOT Queueing Message");
             }
+          }
+          else {
+            console.log("responses.departures[" + i + "] not defined");
+            var message = JSON.parse(JSON.stringify({"code":stop,"headsign":"Departure N/A","esttime":"N/A"}));
+            addMessage(message);
+          }
         }
       }
       else {
