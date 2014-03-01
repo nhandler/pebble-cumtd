@@ -115,6 +115,12 @@ function getDepartures(stop) {
       if(req.status == 200) {
         var response = JSON.parse(req.responseText);
         for (var i=0; i < 5 ; i++) {
+          if (!response.departures[i] && i == 0) {
+            console.log("No Departures for " + stop);
+            var message = JSON.parse(JSON.stringify({"code":stop,"headsign":"No Departures","esttime":""}));
+            addMessage(message);
+            break;
+          }
           if (response.departures[i]) {
             var headsign = response.departures[i].headsign;
             var time = response.departures[i].expected_mins;
