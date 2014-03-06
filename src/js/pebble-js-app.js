@@ -115,7 +115,7 @@ function getDepartures(stop) {
       if(req.status == 200) {
         var response = JSON.parse(req.responseText);
         for (var i=0; i < 5 ; i++) {
-          if (!response.departures[i] && i == 0) {
+          if (!response.departures[i] && i === 0) {
             console.log("No Departures for " + stop);
             var message = JSON.parse(JSON.stringify({"code":stop,"headsign":"No Departures","esttime":""}));
             addMessage(message);
@@ -138,8 +138,8 @@ function getDepartures(stop) {
               console.log("Time: " + time);
             }
             if (headsign && time) {
-              var message = JSON.parse(JSON.stringify({"code":stop,"headsign":headsign,"esttime":time}));
-              addMessage(message);
+              var message2 = JSON.parse(JSON.stringify({"code":stop,"headsign":headsign,"esttime":time}));
+              addMessage(message2);
             }
             else {
               console.log("NOT Queueing Message");
@@ -147,8 +147,8 @@ function getDepartures(stop) {
           }
           else {
             console.log("responses.departures[" + i + "] not defined");
-            var message = JSON.parse(JSON.stringify({"code":stop,"headsign":"Departure N/A","esttime":"N/A"}));
-            addMessage(message);
+            var message3 = JSON.parse(JSON.stringify({"code":stop,"headsign":"Departure N/A","esttime":"N/A"}));
+            addMessage(message3);
           }
         }
       }
