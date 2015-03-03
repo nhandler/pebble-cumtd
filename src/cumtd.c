@@ -37,9 +37,6 @@ enum {
 };
 
 static void update_code(char *new_code) {
-  if (dep_code) {
-    free(dep_code);
-  }
   dep_code = malloc(sizeof(char)*(strlen(new_code)+1+12));
   strcpy(dep_code, "Departures: ");
   strcat(dep_code, new_code);
